@@ -12,11 +12,11 @@ class IconButton(ButtonBehavior, AsyncImage):
 
 
 class PlayScreen(Widget):
-    _artist = StringProperty("kivy.org")
-    _album = StringProperty("kivy.org")
-    _title = StringProperty("kivy.org")
+    _artist = StringProperty("Stream music from another device")
+    _album = StringProperty("")
+    _title = StringProperty("")
     _album_art = StringProperty("images/kivy.jpg")
-    _stream_status_icon = StringProperty("images/play.png")
+    _stream_status_icon = StringProperty("icons/play.png")
 
     def __init__(self):
         super(PlayScreen, self).__init__()
@@ -37,10 +37,10 @@ class PlayScreen(Widget):
 
     def updateStreamStatus(self, state):
         self._state = state
-        if state == "pause":
-            self._stream_status_icon = "images/play.png"
+        if state == "pause" or state == "stop":
+            self._stream_status_icon = "icons/play.png"
         else:
-            self._stream_status_icon = "images/pause.png"
+            self._stream_status_icon = "icons/pause.png"
 
 # Buttons
     def playPauseSong(self):
