@@ -1,0 +1,57 @@
+#:kivy 1.0.9
+
+<PlayScreen>:
+
+    GridLayout:
+        cols: 2
+        spacing: 30
+        size: root.size
+
+        #BoxLayout:
+            #size: (self.width, self.height)
+        AsyncImage:
+            allow_stretch: True
+            source: root._album_art
+            center_x: (self.width/2)
+
+
+        GridLayout:
+            #color: green
+            id: info
+            rows: 4
+            spacing: 20
+
+            Label:
+                font_size: 40
+                text_size: info.width, None
+                halign: 'center'
+                text: root._artist
+
+            Label:
+                font_size: 40
+                text_size: info.width, None
+                halign: 'center'
+                text: root._album
+
+            Label:
+                font_size: 40
+                text_size: info.width, None
+                halign: 'center'
+                text: root._title
+
+            GridLayout:
+                cols: 3
+
+                IconButton:
+                    halign: "right"
+                    source: "icons/previous.png"
+                    on_press: root.previousSong()
+
+                IconButton:
+                    source: root._stream_status_icon
+                    on_press: root.playPauseSong()
+
+                IconButton:
+                    halign: "left"
+                    source: "icons/next.png"
+                    on_press: root.nextSong()

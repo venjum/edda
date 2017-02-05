@@ -1,0 +1,3 @@
+[submodule "bluesound"]
+	path = bluesound
+	url = git@github.com:venjum/bluesound
