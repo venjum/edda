@@ -1,22 +1,18 @@
 #:kivy 1.0.9
 
-<PlayScreen>:
 
+<PlayScreen>:
     GridLayout:
         cols: 2
         spacing: 30
         size: root.size
 
-        #BoxLayout:
-            #size: (self.width, self.height)
         AsyncImage:
             allow_stretch: True
             source: root._album_art
             center_x: (self.width/2)
 
-
         GridLayout:
-            #color: green
             id: info
             rows: 4
             spacing: 20
@@ -55,3 +51,50 @@
                     halign: "left"
                     source: "icons/next.png"
                     on_press: root.nextSong()
+
+<InfoScreen>:
+    timescreen: timescreen
+    currentweather: currentweather
+    BoxLayout:
+        TimeScreen:
+            id: timescreen
+        Weather:
+            id: currentweather
+
+<TimeScreen>:
+    orientation: "vertical"
+    padding: [0, 200, 0, 200]
+    Label:
+        text: root.clock
+        font_size: "100dp"
+        bold: True
+    Label:
+        text: root.weekday
+        font_size: "50dp"
+    Label:
+        text: root.date
+        font_size: "50dp"
+
+<Weather>:
+    orientation: "vertical"
+    padding: [0, 0, 0, 50]
+    AsyncImage:
+        allow_stretch: True
+        size_hint_y: 80
+        source: root.icon
+    Label:
+        size_hint_y: 10
+        text: root.location
+        underline: True
+        font_size: "30dp"
+    BoxLayout:
+        size_hint_y: 10
+        Label:
+            text: "{}°C".format(root.temperature)
+            font_size: "30dp"
+        Label:
+            text: "{} mm".format(root.precipitation)
+            font_size: "30dp"
+        Label:
+            text: "{} mps".format(root.wind_speed)
+            font_size: "30dp"
