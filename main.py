@@ -110,7 +110,9 @@ class Weather(BoxLayout):
 
     def __init__(self, **kwargs):
         super(Weather, self).__init__(**kwargs)
-        self.update_weather_location('Norge/Oslo/Oslo/Løren')
+        config = EddaApp.get_running_app().config
+        yr_location = config.getdefault("Weather", "yr_location", "Norge/Oslo//Oslo/Oslo")
+        self.update_weather_location(yr_location)
 
     def update_weather_location(self, location):
         self.location_full_name = location
@@ -157,12 +159,18 @@ class InfoScreen(BoxLayout):
 
 class EddaApp(App):
     def build(self):
-        self.bluesound = Bluesound("192.168.1.87", 1.0, set([title1, title2, title3, coverImage, streamState]))
+        config = self.get_running_app().config
+        bluesound_ip = config.getdefault("Bluesound", "ip_address", "192.168.0.1")
+        self.bluesound = Bluesound(bluesound_ip, 1.0, set([title1, title2, title3, coverImage, streamState]))
         self.bluesound.start()
         return EddaRoot(self.bluesound)
 
     def on_stop(self):
         self.bluesound.stop()
+
+    def build_config(self, config):
+        config.setdefaults('Bluesound', {'ip_address': "192.168.0.1"})
+        config.setdefaults('Weather', {'yr_location': 'Norge/Oslo/Oslo/Oslo'})
 
 
 if __name__ == '__main__':
