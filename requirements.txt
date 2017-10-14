@@ -1,0 +1,4 @@
+python-yr==1.4.5
+xmltodict==0.11.0
+git+https://github.com/venjum/bluesound.git#egg=bluesound
+.
