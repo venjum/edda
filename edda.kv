@@ -1,13 +1,14 @@
 #:kivy 1.0.9
 
-
 <PlayScreen>:
+    coverart:coverart
     GridLayout:
         cols: 2
         spacing: 30
         size: root.size
 
-        AsyncImage:
+        CoverArt:
+            id: coverart
             allow_stretch: True
             source: root._album_art
             center_x: (self.width/2)

@@ -4,18 +4,26 @@ from kivy.app import App
 from kivy.uix.widget import Widget
 from kivy.uix.boxlayout import BoxLayout
 from kivy.properties import StringProperty, ObjectProperty
-from kivy.uix.image import AsyncImage
+from kivy.uix.image import AsyncImage, Image
 from kivy.uix.behaviors import ButtonBehavior
 from kivy.clock import Clock
 from kivy.uix.carousel import Carousel
 from kivy.core.window import Window
+from kivy.network.urlrequest import UrlRequest
+from shutil import copy
 
 from bluesound.bluesound_control import Bluesound
 from bluesound.bluesound_subscription_objects import title1, title2, title3, coverImage, streamState
 from yr.libyr import Yr
 
+cover_image_path = "images/cover_image.png"
+
 
 class IconButton(ButtonBehavior, AsyncImage):
+    pass
+
+
+class CoverArt(Image):
     pass
 
 
@@ -54,8 +62,10 @@ class PlayScreen(Widget):
     _artist = StringProperty("Stream music from another device")
     _album = StringProperty("")
     _title = StringProperty("")
-    _album_art = StringProperty("images/kivy.jpg")
     _stream_status_icon = StringProperty("icons/play.png")
+
+    _album_art = StringProperty()
+    coverart = ObjectProperty()
 
     def __init__(self, bluesound, **kwargs):
         super(PlayScreen, self).__init__(**kwargs)
@@ -66,6 +76,8 @@ class PlayScreen(Widget):
         title3.setCallback(self.setAlbum)
         coverImage.setCallback(self.setAlbumArt)
         streamState.setCallback(self.updateStreamStatus)
+        copy("images/kivy.jpg", cover_image_path)
+        self._album_art = cover_image_path
 
     def setArtist(self, artist):
         self._artist = artist
@@ -77,7 +89,10 @@ class PlayScreen(Widget):
         self._title = title
 
     def setAlbumArt(self, album_art):
-        self._album_art = album_art
+        def changeCover(request, result):
+            self.coverart.reload()
+
+        UrlRequest(url=album_art, file_path=cover_image_path, on_success=changeCover)
 
     def updateStreamStatus(self, state):
         self._state = state
