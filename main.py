@@ -10,11 +10,14 @@ from kivy.clock import Clock
 from kivy.uix.carousel import Carousel
 from kivy.core.window import Window
 from kivy.network.urlrequest import UrlRequest
+from kivy.logger import Logger
 from shutil import copy
 
+from yr.libyr import Yr
 from bluesound.bluesound_control import Bluesound
 from bluesound.bluesound_subscription_objects import title1, title2, title3, coverImage, streamState
-from yr.libyr import Yr
+from buttons import Source, EddaButtons
+
 
 cover_image_path = "images/cover_image.png"
 
@@ -30,32 +33,21 @@ class CoverArt(Image):
 class EddaRoot(Carousel):
     def __init__(self, bluesound, **kwargs):
         super(EddaRoot, self).__init__(**kwargs)
-        self.infoscreen = InfoScreen()
-        self.playscreen = PlayScreen(bluesound)
-        self.add_widget(self.infoscreen)
-        self.add_widget(self.playscreen)
-        self._keyboard = Window.request_keyboard(self._keyboard_closed, self)
-        self._keyboard.bind(on_key_down=self._on_keyboard_down)
-        self.load_infoscreen()
+        self.screen_dict = {Source.INFO.value: InfoScreen(), Source.PLAY.value: PlayScreen(bluesound)}
+        for key, screen in self.screen_dict.items():
+            self.add_widget(screen)
 
-    def _keyboard_closed(self):
-        self._keyboard.unbind(on_key_down=self._on_keyboard_down)
-        self._keyboard = None
+        self.buttons = EddaButtons(self, self.load_screen)
 
-    def _on_keyboard_down(self, keyboard, keycode, text, modifiers):
-        if keycode[1] is '1':
-            self.load_infoscreen()
-        elif keycode[1] is '2':
-            self.load_playscreen()
-        return True
-
-    def load_infoscreen(self):
-        if self.current_slide is not self.infoscreen:
-            self.load_slide(self.infoscreen)
-
-    def load_playscreen(self):
-        if self.current_slide is not self.playscreen:
-            self.load_slide(self.playscreen)
+    def load_screen(self, screen_key):
+        try:
+            screen = self.screen_dict[screen_key.value]
+        except KeyError:
+            Logger.warning("Screen not implemented: {}".format(screen_key))
+        else:
+            if self.current_slide is not screen:
+                Logger.info("Activate screen: {}".format(screen_key))
+                self.load_slide(screen)
 
 
 class PlayScreen(Widget):
@@ -176,6 +168,7 @@ class EddaApp(App):
     def build(self):
         config = self.get_running_app().config
         bluesound_ip = config.getdefault("Bluesound", "ip_address", "192.168.0.1")
+        Logger.info("Connecting to Bluesound receiver with IP: {}".format(bluesound_ip))
         self.bluesound = Bluesound(bluesound_ip, 1.0, set([title1, title2, title3, coverImage, streamState]))
         self.bluesound.start()
         return EddaRoot(self.bluesound)
