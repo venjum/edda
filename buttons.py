@@ -1,9 +1,14 @@
+import os
+import time
 from kivy.core.window import Window
 from kivy.logger import Logger
 
 from enum import Enum, unique
-import RPi.GPIO as GPIO
-import time
+if os.getenv("RASPBERRY_GPIO"):
+    # Need to install:
+    # pip3 install RPi.GPIO==0.6.3
+    import RPi.GPIO as GPIO
+
 
 MAX_TIME_BUTTON_HIGH_AND_LOW = 0.5
 
@@ -52,7 +57,8 @@ class EddaButtons(object):
         self._keyboard = Window.request_keyboard(self._keyboard_closed, self._root)
         self._keyboard.bind(on_key_down=self._on_keyboard_down)
         self._callback_source_select(Source.INFO)
-        init_raspberry_gpio(self.gpio_callback)
+        if os.getenv("RASPBERRY_GPIO"):
+            init_raspberry_gpio(self.gpio_callback)
         self.last_callback_s = 0
 
     def gpio_callback(self, channel):

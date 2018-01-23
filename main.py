@@ -36,7 +36,6 @@ class EddaRoot(Carousel):
         self.screen_dict = {Source.INFO.value: InfoScreen(), Source.PLAY.value: PlayScreen(bluesound)}
         for key, screen in self.screen_dict.items():
             self.add_widget(screen)
-
         self.buttons = EddaButtons(self, self.load_screen)
 
     def load_screen(self, screen_key):
